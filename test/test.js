@@ -1,13 +1,8 @@
-var moquire = require('../index')(__dirname)
+var moquire = require('../index')
 var chai = require('chai')
 chai.should()
 
 describe('moquire', function () {
-
-  it('is initialized by passing in __dirname from the calling module', function () {
-    var moquire = require('../index')
-    moquire('base').should.be.a('function')
-  })
 
   it('uses the same path identifiers as node require', function () {
     var a = require('./a')

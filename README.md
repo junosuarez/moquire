@@ -13,9 +13,7 @@ Use moquire to test your modules in isolation without trying to hack around `req
 
 ## usage
 
-Pass in `__dirname` to initialize `moquire` with the current file's directory (so it can resolve relative paths)
-
-    var moquire = require('moquire')(__dirname)
+    var moquire = require('moquire')
 
     var moduleUnderTest = moquire('../test', {
       depA: {},
