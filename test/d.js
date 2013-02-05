@@ -1,1 +1,1 @@
-exports = 'foo'
+exports = 'baz'

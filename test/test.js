@@ -35,7 +35,7 @@ describe('moquire', function () {
 
   it('supports exports as well as module.exports', function () {
     var d = moquire('./d')
-    d.should.equal('foo')
+    d.should.equal('baz')
   })
 
   it('passes normal global objects to the called module', function () {
