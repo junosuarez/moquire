@@ -14,6 +14,7 @@
     "url": "git@github.com:jden/moquire.git"
   },
   "author": "jden <jason@denizac.org>",
+  "contributors": ["jden <jason@denizac.org>"],
   "license": "MIT",
   "readmeFilename": "README.md",
   "devDependencies": {
