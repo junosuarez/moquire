@@ -1,6 +1,6 @@
 {
   "name": "moquire",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "because mocking `require`d modules for unit tests should be easy",
   "main": "index.js",
   "directories": {
