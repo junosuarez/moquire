@@ -1,6 +1,8 @@
 var moquire = require('../index')
 var chai = require('chai')
 chai.should()
+chai.use(require('chai-interface'))
+var sinon = require('sinon')
 
 describe('moquire', function () {
 
@@ -35,4 +37,41 @@ describe('moquire', function () {
     var d = moquire('./d')
     d.should.equal('foo')
   })
+
+  it('passes normal global objects to the called module', function () {
+    var e = moquire('./e')
+    e.should.have.interface({
+      setTimeout: Function,
+      setInterval: Function,
+      clearTimeout: Function,
+      clearInterval: Function,
+      process: Object,
+      console: Object
+    })
+  })
+
+  it('caches module source on repeat moquires', function () {
+    // get meta
+    var mockFs = {readFileSync: sinon.stub().returns('')}
+    var m = moquire('../index', {fs: mockFs})
+
+    m('./a')
+    m('./a')
+
+    mockFs.readFileSync.callCount.should.equal(1)
+  })
+
+  describe('.nocache', function () {
+    it('loads module source from disk each time', function () {
+      // get meta
+      var mockFs = {readFileSync: sinon.stub().returns('')}
+      var m = moquire('../index', {fs: mockFs}).nocache
+
+      m('./a')
+      m('./a')
+
+      mockFs.readFileSync.callCount.should.equal(2)
+    })
+  })
+
 })

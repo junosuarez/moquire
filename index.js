@@ -6,9 +6,24 @@ var resolve = require('resolve')
 var cache = {}
 var basedir = path.dirname(module.parent.filename)
 
+function shallowClone(obj) {
+  var clone = {}
+  for(var prop in obj) {
+    clone[prop] = obj[prop]
+  }
+  return clone
+}
+
 function load(path) {
-  return cache[path]
-    || (cache[path] = fs.readFileSync(path, 'utf8'))
+
+  if (this === nocache) {
+    return fs.readFileSync(path, 'utf8')
+  }
+
+  return path in cache
+    ? cache[path]
+    : (cache[path] = fs.readFileSync(path, 'utf8'))
+    ;
 }
 
 function moquire(path, mocks) {
@@ -16,17 +31,16 @@ function moquire(path, mocks) {
 
   mocks = mocks || {};
   var exports = {};
-  var context = {
-    require: function (path) {
+  var context = shallowClone(global)
+  context.require = function (path) {
       return mocks[path] || require(path)
-    },
-    exports: exports,
-    module: {
-      exports: exports
     }
-  }
+  context.exports = exports
+  context.module = shallowClone(module)
+  context.module.exports = exports
 
-  var source = load(resolved)
+  // pass through context
+  var source = load.call(this, resolved)
 
   vm.createScript(source, resolved)
     .runInNewContext(context)
@@ -44,4 +58,9 @@ function moquire(path, mocks) {
 
 }
 
+function nocache (path, mocks) {
+  return moquire.call(nocache, path, mocks)
+}
+
 module.exports = moquire;
+module.exports.nocache = nocache;

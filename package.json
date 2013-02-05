@@ -1,6 +1,6 @@
 {
   "name": "moquire",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "because mocking `require`d modules for unit tests should be easy",
   "main": "index.js",
   "directories": {
@@ -14,12 +14,16 @@
     "url": "git@github.com:jden/moquire.git"
   },
   "author": "jden <jason@denizac.org>",
-  "contributors": ["jden <jason@denizac.org>"],
+  "contributors": [
+    "jden <jason@denizac.org>"
+  ],
   "license": "MIT",
   "readmeFilename": "README.md",
   "devDependencies": {
     "chai": "~1.5.0",
-    "mocha": "~1.8.1"
+    "mocha": "~1.8.1",
+    "sinon": "~1.5.2",
+    "chai-interface": "~1.0.0"
   },
   "dependencies": {
     "resolve": "~0.2.3"
