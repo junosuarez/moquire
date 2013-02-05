@@ -61,6 +61,14 @@ describe('moquire', function () {
     mockFs.readFileSync.callCount.should.equal(1)
   })
 
+  it('copies over Object.prototype for stubborn people like me who like to use "such strange test apis"', function () {
+    var f = moquire('./f')
+
+    var here = Object.getOwnPropertyNames(f.__proto__)
+    var there = Object.getOwnPropertyNames({}.__proto__)
+    here.should.deep.equal(there)
+  })
+
   describe('.nocache', function () {
     it('loads module source from disk each time', function () {
       // get meta

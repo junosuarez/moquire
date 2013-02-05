@@ -32,6 +32,7 @@ function moquire(path, mocks) {
   mocks = mocks || {};
   var exports = {};
   var context = shallowClone(global)
+  context.__objectProto = Object.prototype
   context.require = function (path) {
       return mocks[path] || require(path)
     }
@@ -41,6 +42,8 @@ function moquire(path, mocks) {
 
   // pass through context
   var source = load.call(this, resolved)
+  // copy Object.prototype
+  source = "Object.getOwnPropertyNames(__objectProto).forEach(function(x){Object.prototype[x] = __objectProto[x]});" + source
 
   vm.createScript(source, resolved)
     .runInNewContext(context)
