@@ -2,6 +2,9 @@ var vm = require('vm')
 var fs = require('fs')
 var dirname = require('path').dirname
 var resolve = require('resolve')
+console.log()
+// delete this module from the cache to force re-require in order to allow resolving test module via parent.module
+delete require.cache[require.resolve(__filename)];
 
 var cache = {}
 var basedir = module && module.parent && module.parent.filename ? dirname(module.parent.filename) : ''
@@ -63,15 +66,21 @@ function makeContext(context) {
 
 function moquire(path, mocks) {
   var resolved = resolve.sync(path, {basedir: basedir})
-  var newBase = dirname(resolved)
+  var resolvedDir = dirname(resolved)
+  var resolver = function (module) {
+    return resolve.sync(module, {basedir: resolvedDir})
+  }
 
   mocks = mocks || {};
   var exports = {};
   var context = extend(global);
   context.require = function (module) {
-    var filename = resolve.sync(module, {basedir: newBase})
+    var filename = resolver(module)
     return mocks[module] || require(filename)
   }
+  context.require.resolve = resolver
+  context.require.cache = {}
+
   var newExports = exports;
   context.__defineSetter__('exports', function(val) { newExports = val; })
   context.module = extend(module)
@@ -85,6 +94,8 @@ function moquire(path, mocks) {
     paths: [require('path').resolve(dirname(resolved), './node_modules')].concat(module.parent.paths)
   }
   context.module.exports = exports
+  context.__filename = resolved
+  context.__dirname = resolvedDir
   var ctx = makeContext(context)
 
   var source = load.call(this, resolved)
