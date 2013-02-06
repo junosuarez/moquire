@@ -39,9 +39,10 @@ or
 
     $ npm test
 
-## inspired by
- * nathanmacinnes' [injectr](https://npmjs.org/package/injectr)
- * vojtajina's article [Testing Private State and Mocking Dependencies](http://howtonode.org/testing-private-state-and-mocking-deps)
+## inspiration & kudos
+ * @nathanmacinnes' [injectr](https://npmjs.org/package/injectr)
+ * @vojtajina's article [Testing Private State and Mocking Dependencies](http://howtonode.org/testing-private-state-and-mocking-deps)
+ * @thlorenz for the pointer on [#1](https://github.com/jden/moquire/issues/1)
 
 ## contributors
 
