@@ -50,10 +50,15 @@ describe('moquire', function () {
     })
   })
 
+  it('can call nested requires', function () {
+    moquire('./r').should.equal('r2')
+  })
+
   it('caches module source on repeat moquires', function () {
     // get meta
     var mockFs = {readFileSync: sinon.stub().returns('')}
-    var m = moquire('../index', {fs: mockFs})
+    var mockResolve = {sync: sinon.stub().returns('')}
+    var m = moquire('../index', {fs: mockFs, resolve: mockResolve})
 
     m('./a')
     m('./a')
@@ -73,7 +78,8 @@ describe('moquire', function () {
     it('loads module source from disk each time', function () {
       // get meta
       var mockFs = {readFileSync: sinon.stub().returns('')}
-      var m = moquire('../index', {fs: mockFs}).nocache
+      var mockResolve = {sync: sinon.stub().returns('')}
+      var m = moquire('../index', {fs: mockFs, resolve: mockResolve}).nocache
 
       m('./a')
       m('./a')

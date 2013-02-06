@@ -1,20 +1,27 @@
 var vm = require('vm')
 var fs = require('fs')
-var path = require('path')
+var dirname = require('path').dirname
 var resolve = require('resolve')
 
 var cache = {}
-var basedir = module && module.parent && module.parent.filename ? path.dirname(module.parent.filename) : ''
+var basedir = module && module.parent && module.parent.filename ? dirname(module.parent.filename) : ''
 
-function load(path) {
+function load(filename) {
   if (this === nocache) {
-    return fs.readFileSync(path, 'utf8')
+    return _load(filename)
   }
 
-  return path in cache
-    ? cache[path]
-    : (cache[path] = fs.readFileSync(path, 'utf8'))
+  return filename in cache
+    ? cache[filename]
+    : (cache[filename] = _load(filename))
     ;
+}
+
+function _load(filename) {
+  var content = fs.readFileSync(filename, 'utf8')
+  // remove shebang
+  content = content.replace(/^\#\!.*/, '');
+  return content;
 }
 
 function extend() {
@@ -56,16 +63,27 @@ function makeContext(context) {
 
 function moquire(path, mocks) {
   var resolved = resolve.sync(path, {basedir: basedir})
+  var newBase = dirname(resolved)
 
   mocks = mocks || {};
   var exports = {};
   var context = extend(global);
-  context.require = function (path) {
-      return mocks[path] || require(path)
-    }
+  context.require = function (module) {
+    var filename = resolve.sync(module, {basedir: newBase})
+    return mocks[module] || require(filename)
+  }
   var newExports = exports;
   context.__defineSetter__('exports', function(val) { newExports = val; })
   context.module = extend(module)
+  context.module.parent = {
+    id: resolved,
+    exports: exports,
+    parent: module.parent,
+    filename: resolved,
+    loaded: true,
+    children: [],
+    paths: [require('path').resolve(dirname(resolved), './node_modules')].concat(module.parent.paths)
+  }
   context.module.exports = exports
   var ctx = makeContext(context)
 
