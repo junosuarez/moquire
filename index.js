@@ -11,7 +11,7 @@ delete require.cache[require.resolve(__filename)];
 
 var cache = {}
 var basedir = module && module.parent && module.parent.filename ? dirname(module.parent.filename) : ''
-var packageBase = relquire.findBase(module.parent.dirname)
+var packageBase = relquire.findBase(module.parent.filename)
 
 function load(filename) {
   if (this === nocache) {
