@@ -26,6 +26,7 @@
     "chai-interface": "~1.0.0"
   },
   "dependencies": {
-    "resolve": "~0.2.3"
+    "resolve": "~0.2.3",
+    "relquire": "~0.3.0"
   }
 }

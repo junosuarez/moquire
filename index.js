@@ -2,12 +2,16 @@ var vm = require('vm')
 var fs = require('fs')
 var dirname = require('path').dirname
 var resolve = require('resolve')
-console.log()
+
+// load it explicitly out of node_modules to prevent it from being mocked
+var relquire = require('./node_modules/relquire')
+
 // delete this module from the cache to force re-require in order to allow resolving test module via parent.module
 delete require.cache[require.resolve(__filename)];
 
 var cache = {}
 var basedir = module && module.parent && module.parent.filename ? dirname(module.parent.filename) : ''
+var packageBase = relquire.findBase(module.parent.dirname)
 
 function load(filename) {
   if (this === nocache) {
@@ -72,6 +76,7 @@ function moquire(path, mocks) {
   }
 
   mocks = mocks || {};
+
   var exports = {};
   var context = extend(global);
   context.require = function (module) {
@@ -80,6 +85,14 @@ function moquire(path, mocks) {
   }
   context.require.resolve = resolver
   context.require.cache = {}
+
+  mocks.relquire = function (rel) {
+    if (mocks[rel]) {
+      return mocks[rel]
+    }
+    var filename = relquire.resolve(rel, packageBase)
+    return require(filename)
+  }
 
   var newExports = exports;
   context.__defineSetter__('exports', function(val) { newExports = val; })

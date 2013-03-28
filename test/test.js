@@ -74,6 +74,14 @@ describe('moquire', function () {
     here.should.deep.equal(there)
   })
 
+  it('can mock relquire`d modules', function () {
+    var mock = 'mock'
+    var module = moquire('./relquire', {'~/test/a': mock})
+  
+    module.a.should.equal(mock)
+
+  })
+
   describe('.nocache', function () {
     it('loads module source from disk each time', function () {
       // get meta
