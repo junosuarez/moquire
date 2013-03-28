@@ -79,7 +79,11 @@ describe('moquire', function () {
     var module = moquire('./relquire', {'~/test/a': mock})
   
     module.a.should.equal(mock)
+  })
 
+  it('can load mocked modules using relquire paths', function () {
+    var module = moquire('~/test/b')
+    module.a.should.equal('a test module')
   })
 
   describe('.nocache', function () {
