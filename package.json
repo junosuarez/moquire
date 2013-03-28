@@ -23,7 +23,8 @@
     "chai": "~1.5.0",
     "mocha": "~1.8.1",
     "sinon": "~1.5.2",
-    "chai-interface": "~1.0.0"
+    "chai-interface": "~1.0.0",
+    "relquire": "~0.4.0"
   },
   "dependencies": {
     "resolve": "~0.2.3",

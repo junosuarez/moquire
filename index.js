@@ -69,6 +69,7 @@ function makeContext(context) {
 }
 
 function moquire(path, mocks) {
+  path = relquire.resolve(path, packageBase)
   var resolved = resolve.sync(path, {basedir: basedir})
   var resolvedDir = dirname(resolved)
   var resolver = function (module) {
