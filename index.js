@@ -4,7 +4,20 @@ var dirname = require('path').dirname
 var resolve = require('resolve')
 
 // load it explicitly out of node_modules to prevent it from being mocked
-var relquire = require('./node_modules/relquire')
+// we attempt to load it recursively up the file system in case
+// it is not installed in the local-most node_modules directory,
+// which can happen if the module requiring moquire also requires a
+// satisfiable version of relquire.
+var relquire = __dirname.split('/').reduceRight(function (dep, seg, i, segs) {
+  if (dep) { return dep }
+  var base = '/' + segs.slice(0, i+1).join('/')
+  var path = join(base, './node_modules/relquire')
+  try {
+    dep = require(path)
+  } finally {
+    return dep
+  }
+}, null)
 
 // delete this module from the cache to force re-require in order to allow resolving test module via parent.module
 delete require.cache[require.resolve(__filename)];
