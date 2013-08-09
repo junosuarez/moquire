@@ -2,6 +2,7 @@ var vm = require('vm')
 var fs = require('fs')
 var dirname = require('path').dirname
 var resolve = require('resolve')
+var join = require('path').join
 
 // load it explicitly out of node_modules to prevent it from being mocked
 // we attempt to load it recursively up the file system in case
