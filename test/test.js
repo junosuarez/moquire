@@ -84,6 +84,18 @@ describe('moquire', function () {
     })
   })
 
+  it('can mock relquire`d modules', function () {
+    var mock = 'mock'
+    var module = moquire('./relquire', {'~/test/a': mock})
+  
+    module.a.should.equal(mock)
+  })
+
+  it('can load mocked modules using relquire paths', function () {
+    var module = moquire('~/test/b')
+    module.a.should.equal('a test module')
+  })
+
   describe('.nocache', function () {
     it('loads module source from disk each time', function () {
       // get meta

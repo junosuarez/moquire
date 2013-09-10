@@ -9,7 +9,7 @@ Use moquire to test your modules in isolation without trying to hack around `req
 
 `moquire` makes it stupid simple to intercept calls to node's favorite service locator, `require`.
 
-`moquire` is designed to be as similar to `require` as possible - down to the name. The api footprint is intentionally small. If you need more functionality, see [sandboxed-module](https://npmjs.org/package/sandboxed-module).
+`moquire` is designed to be as similar to `require` as possible - down to the name. The api footprint is intentionally small. If you need more functionality, see [sandboxed-module](https://npmjs.org/package/sandboxed-module) or [proxyquire](https://npmjs.org/package/proxyquire).
 
 ## install
 
@@ -34,6 +34,33 @@ or
 
     var moquire = require('moquire')
     moquire.nocache('foo', {})
+
+## relquire
+
+Since 1.5.0, `moquire` supports mocking [`relquire`](https://npm.im/relquire) dependencies like so:
+
+Let's imagine a project laid out like:
+
+    ├── a.js
+    ├── foo.js
+    └── test
+        └── test.js
+
+`a.js`:
+
+    var relquire = require('relquire')
+    var foo = relquire('~/foo')
+
+`test.js`:
+
+    var moquire = require('moquire')
+    var fakeFoo = {}
+    var a = moquire('../a', {'~/foo': fakeFoo})
+
+Of course, you can use relative requires in `moquire`, too:
+
+    var a = moquire('~/a', {'~/foo': fakeFoo})
+
 
 ## running the tests
 

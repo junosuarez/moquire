@@ -2,12 +2,30 @@ var vm = require('vm')
 var fs = require('fs')
 var dirname = require('path').dirname
 var resolve = require('resolve')
-console.log()
+var join = require('path').join
+
+// load it explicitly out of node_modules to prevent it from being mocked
+// we attempt to load it recursively up the file system in case
+// it is not installed in the local-most node_modules directory,
+// which can happen if the module requiring moquire also requires a
+// satisfiable version of relquire.
+var relquire = __dirname.split('/').reduceRight(function (dep, seg, i, segs) {
+  if (dep) { return dep }
+  var base = '/' + segs.slice(0, i+1).join('/')
+  var path = join(base, './node_modules/relquire')
+  try {
+    dep = require(path)
+  } finally {
+    return dep
+  }
+}, null)
+
 // delete this module from the cache to force re-require in order to allow resolving test module via parent.module
 delete require.cache[require.resolve(__filename)];
 
 var cache = {}
 var basedir = module && module.parent && module.parent.filename ? dirname(module.parent.filename) : ''
+var packageBase = relquire.findBase(module.parent.filename)
 
 function load(filename) {
   if (this === nocache) {
@@ -65,6 +83,7 @@ function makeContext(context) {
 }
 
 function moquire(path, mocks) {
+  path = relquire.resolve(path, packageBase)
   var resolved = resolve.sync(path, {basedir: basedir})
   var resolvedDir = dirname(resolved)
   var resolver = function (module) {
@@ -72,6 +91,7 @@ function moquire(path, mocks) {
   }
 
   mocks = mocks || {};
+
   var exports = {};
   var context = extend(global);
   context.require = function (module) {
@@ -80,6 +100,14 @@ function moquire(path, mocks) {
   }
   context.require.resolve = resolver
   context.require.cache = {}
+
+  mocks.relquire = function (rel) {
+    if (mocks[rel]) {
+      return mocks[rel]
+    }
+    var filename = relquire.resolve(rel, packageBase)
+    return require(filename)
+  }
 
   var newExports = exports;
   context.__defineSetter__('exports', function(val) { newExports = val; })
