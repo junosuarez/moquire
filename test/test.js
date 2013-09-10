@@ -72,6 +72,16 @@ describe('moquire', function () {
     var here = Object.getOwnPropertyNames(f.__proto__)
     var there = Object.getOwnPropertyNames({}.__proto__)
     here.should.deep.equal(there)
+    here.forEach(function (prop) {
+      var hereD = Object.getOwnPropertyDescriptor(f.__proto__, prop)
+      var thereD = Object.getOwnPropertyDescriptor({}.__proto__, prop)
+      if (hereD.writable) { hereD.writable.should.equal(thereD.writable) }
+      if (hereD.get) { hereD.get.should.equal(thereD.get) }
+      if (hereD.set) { hereD.set.should.equal(thereD.set) }
+      hereD.enumerable.should.equal(thereD.enumerable)
+      hereD.configurable.should.equal(thereD.configurable)
+
+    })
   })
 
   describe('.nocache', function () {
