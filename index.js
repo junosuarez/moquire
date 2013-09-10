@@ -58,17 +58,10 @@ function extend() {
 // try to be as close to the original context as possible, by copying over
 // Object.prototype and global into vm context
 var copyObjectProto = vm.createScript('(function () {'
-  + 'var base = Object.getOwnPropertyNames({}.__proto__);'
-  + 'var extra = Object.getOwnPropertyNames(__o).filter(function(prop) { return base.indexOf(prop) === -1; });'
+  + 'var base = Object.getOwnPropertyNames(Object.prototype);'
+  + 'var extra = Object.getOwnPropertyNames(__o).filter(function(prop) { return base.indexOf(prop) === -1 });'
   + 'extra.forEach(function(prop){'
-  +   'var getter = __o.__lookupGetter__(prop);'
-  +   'var setter = __o.__lookupSetter__(prop);'
-  +   'if (getter || setter) {'
-  +     'if (getter) ({}).__proto__.__defineGetter__(prop, getter);'
-  +     'if (setter) ({}).__proto__.__defineSetter__(prop, setter);'
-  +   '} else {'
-  +     '({}).__proto__[prop] = __o[prop];'
-  +   '}'
+  + ' Object.defineProperty(Object.prototype, prop, Object.getOwnPropertyDescriptor(__o, prop))'
   + '});'
   + 'delete __o;'
   + '})();');
