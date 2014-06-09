@@ -3,15 +3,17 @@ var fs = require('fs')
 var dirname = require('path').dirname
 var resolve = require('resolve')
 var join = require('path').join
+var SEP = require('path').sep
 
 // load it explicitly out of node_modules to prevent it from being mocked
 // we attempt to load it recursively up the file system in case
 // it is not installed in the local-most node_modules directory,
 // which can happen if the module requiring moquire also requires a
 // satisfiable version of relquire.
-var relquire = __dirname.split('/').reduceRight(function (dep, seg, i, segs) {
+var relquire = __dirname.split(SEP).reduceRight(function (dep, seg, i, segs) {
   if (dep) { return dep }
-  var base = '/' + segs.slice(0, i+1).join('/')
+  var base = SEP === '/' ? '/' : ''
+  base = base + segs.slice(0, i+1).join(SEP)
   var path = join(base, './node_modules/relquire')
   try {
     dep = require(path)
